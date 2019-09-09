@@ -1,0 +1,92 @@
+<?php
+
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_data().
+ */
+function combine_period_year_views_data() {
+  $data['combine_period_year']['table']['group'] = t('Global');
+  $data['combine_period_year']['table']['join'] = [
+    // Exist in all views.
+    '#global' => [],
+  ];
+  $data['combine_period_year']['field_combine_period_year_field'] = [
+    'title' => t('Combine Period Year Field'),
+    'help' => t('Views field that combines the period and year.'),
+    'field' => [
+      'id' => 'field_combine_period_year_field',
+    ],
+  ];
+  $data['combine_period_year']['field_combine_database_period_year_field'] = [
+    'title' => t('Combine DATABASE Period Year Field'),
+    'help' => t('Views field that combines the period and year.'),
+    'field' => [
+      'id' => 'field_combine_database_period_year_field',
+    ],
+  ];
+  $data['combine_period_year']['field_combine_province_period_year_field'] = [
+    'title' => t('Combine Province Period Year Field'),
+    'help' => t('Views field that combines the province, period, and year.'),
+    'field' => [
+      'id' => 'field_combine_province_period_year_field',
+    ],
+  ];
+  $data['combine_period_year']['field_combine_province_year_field'] = [
+    'title' => t('Combine Province Year Field'),
+    'help' => t('Views field that combines the province and year.'),
+    'field' => [
+      'id' => 'field_combine_province_year_field',
+    ],
+  ];
+  $data['combine_period_year']['field_combine_database_province_year_field'] = [
+    'title' => t('Combine DATABASE Province Year Field'),
+    'help' => t('Views field that combines the province and year.'),
+    'field' => [
+      'id' => 'field_combine_database_province_year_field',
+    ],
+  ];
+
+  // Calculated Indicators
+  $data['combine_period_year']['percent_tb_cases_notified'] = [
+    'title' => t('Percent TB Cases Notified'),
+    'help' => t('Proportion of estimated cases notified in a given year.'),
+    'field' => [
+      'id' => 'field_percent_tb_cases_notified',
+    ],
+  ];
+  $data['combine_period_year']['percent_bacteriologically_confirmed_tb_cases'] = [
+    'title' => t('Percent of new bacteriologically confirmed TB cases'),
+    'help' => t('New pulmonary bacteriologically confirmed TB cases and new extra pulmonary cases (bacteriologically confirmed or clinically diagnosed).'),
+    'field' => [
+      'id' => 'field_percent_bacteriologically_confirmed_tb_cases',
+    ],
+  ];
+
+
+
+  return $data;
+}
+
+
+function combine_period_year_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+
+  if ($view->id() == 'denormalized_table_test') {
+    $params = \Drupal::request()->query->all();
+    $postParams = \Drupal::request()->request->all();
+    $params = array_merge($params, $postParams);
+    $selected_fields = $params['views_fields_on_off_form'];
+
+    if ($selected_fields) {
+      $title = [];
+      foreach($selected_fields as $param) {
+        $title[$param] = $view->getHandler($display_id, 'field', $param)['label'];
+      }
+      $new_title = implode(" | ", $title);
+      $view->getStyle()->options['title'] = $new_title;
+
+    }
+
+  }
+
+}

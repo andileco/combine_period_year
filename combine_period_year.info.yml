@@ -1,0 +1,7 @@
+name: Combine Period Year Field
+description: 'Creates a Views field handler that combines the period and year'
+type: module
+package: Views
+core: '8.x'
+dependencies:
+  - drupal:views
